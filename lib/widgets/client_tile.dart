@@ -166,7 +166,7 @@ class ClientTile extends StatelessWidget {
               DataColumn(label: Text('Actions')),
             ],
             source: dataSource,
-            rowsPerPage: 10,
+            rowsPerPage: 8,
             showCheckboxColumn: false,
           ),
         ),
