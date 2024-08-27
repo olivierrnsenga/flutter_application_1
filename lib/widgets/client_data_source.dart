@@ -6,11 +6,16 @@ import 'package:flutter_application_1/screens/edit_client_screen.dart';
 class ClientDataSource extends DataTableSource {
   final List<Client> clients;
   final BuildContext context;
+  final int totalCount; // Add totalCount
 
-  ClientDataSource(this.clients, this.context);
+  ClientDataSource(this.clients, this.context, this.totalCount);
 
   @override
   DataRow getRow(int index) {
+    if (index >= clients.length) {
+      // If the index is out of bounds, return an empty row or handle appropriately
+      return DataRow(cells: List.generate(6, (_) => const DataCell(Text(''))));
+    }
     final Client client = clients[index];
     return DataRow(
       cells: [
@@ -101,7 +106,7 @@ class ClientDataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => clients.length;
+  int get rowCount => totalCount; // Use totalCount for rowCount
 
   @override
   int get selectedRowCount => 0;

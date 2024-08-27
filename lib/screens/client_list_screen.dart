@@ -25,7 +25,7 @@ class ClientListScreen extends StatelessWidget {
             if (state is ClientLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ClientLoaded) {
-              return ClientTile(clients: state.clients);
+              return ClientTile(state: state); // Pass the entire state
             } else if (state is ClientError) {
               return Center(child: Text('Error: ${state.message}'));
             } else {

@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/client.dart';
 import 'package:flutter_application_1/widgets/client_data_source.dart';
+import 'package:flutter_application_1/blocs/client/client_state.dart';
 
 class ClientTile extends StatelessWidget {
-  final List<Client> clients;
+  final ClientState state;
 
-  const ClientTile({super.key, required this.clients});
+  const ClientTile({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
-    final dataSource = ClientDataSource(clients, context);
+    List<Client> clients;
+    int totalCount;
+
+    if (state is ClientLoaded) {
+      clients = (state as ClientLoaded).clients;
+      totalCount = (state as ClientLoaded).totalCount; // Get totalCount
+    } else {
+      clients = [];
+      totalCount = 0;
+    }
+
+    final dataSource = ClientDataSource(clients, context, totalCount);
 
     return Center(
       child: Padding(
@@ -29,6 +41,9 @@ class ClientTile extends StatelessWidget {
             source: dataSource,
             rowsPerPage: 8,
             showCheckboxColumn: false,
+            onPageChanged: (pageIndex) {
+              // Optionally handle page changes if needed
+            },
           ),
         ),
       ),
