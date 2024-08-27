@@ -19,7 +19,7 @@ class ClientListScreen extends StatelessWidget {
         create: (context) => ClientBloc(
             RepositoryProvider.of<ClientRepository>(context))
           ..add(
-              FetchClients(page: 1, pageSize: 10)), // Provide page and pageSize
+              FetchClients(page: 1, pageSize: 8)), // Provide page and pageSize
         child: BlocBuilder<ClientBloc, ClientState>(
           builder: (context, state) {
             if (state is ClientLoading) {

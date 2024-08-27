@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_application_1/blocs/client/client_bloc.dart';
+import 'package:flutter_application_1/blocs/client/client_event.dart';
+import 'package:flutter_application_1/blocs/client/client_state.dart';
 import 'package:flutter_application_1/models/client.dart';
 import 'package:flutter_application_1/widgets/client_data_source.dart';
-import 'package:flutter_application_1/blocs/client/client_state.dart';
 
 class ClientTile extends StatelessWidget {
   final ClientState state;
 
   const ClientTile({super.key, required this.state});
+
+  void _handlePageChange(BuildContext context, int page) {
+    final clientBloc = BlocProvider.of<ClientBloc>(context);
+    clientBloc
+        .add(FetchClients(page: page + 1, pageSize: 8)); // Request next page
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +24,7 @@ class ClientTile extends StatelessWidget {
 
     if (state is ClientLoaded) {
       clients = (state as ClientLoaded).clients;
-      totalCount = (state as ClientLoaded).totalCount; // Get totalCount
+      totalCount = (state as ClientLoaded).totalCount;
     } else {
       clients = [];
       totalCount = 0;
@@ -25,9 +34,9 @@ class ClientTile extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0), // Adjust padding as needed
+        padding: const EdgeInsets.all(16.0),
         child: SizedBox(
-          width: double.infinity, // Expand to fill horizontal space
+          width: double.infinity,
           child: PaginatedDataTable(
             header: const Text('Clients'),
             columns: const [
@@ -41,9 +50,7 @@ class ClientTile extends StatelessWidget {
             source: dataSource,
             rowsPerPage: 8,
             showCheckboxColumn: false,
-            onPageChanged: (pageIndex) {
-              // Optionally handle page changes if needed
-            },
+            onPageChanged: (page) => _handlePageChange(context, page),
           ),
         ),
       ),
