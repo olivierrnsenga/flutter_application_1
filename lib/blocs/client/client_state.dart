@@ -8,8 +8,12 @@ class ClientLoading extends ClientState {}
 
 class ClientLoaded extends ClientState {
   final List<Client> clients;
+  final int totalCount;
 
-  ClientLoaded(this.clients);
+  ClientLoaded({
+    required this.clients,
+    required this.totalCount,
+  });
 }
 
 class ClientError extends ClientState {

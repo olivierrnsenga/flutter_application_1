@@ -14,8 +14,14 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
       FetchClients event, Emitter<ClientState> emit) async {
     emit(ClientLoading());
     try {
-      final clients = await clientRepository.fetchClients();
-      emit(ClientLoaded(clients));
+      final clientResponse = await clientRepository.getClients(
+        event.page,
+        event.pageSize,
+      );
+      emit(ClientLoaded(
+        clients: clientResponse.clients,
+        totalCount: clientResponse.totalCount,
+      ));
     } catch (e) {
       emit(ClientError(e.toString()));
     }

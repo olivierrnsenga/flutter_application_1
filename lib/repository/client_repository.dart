@@ -1,33 +1,39 @@
 import 'dart:convert';
 import 'package:flutter_application_1/models/client.dart';
+import 'package:flutter_application_1/models/client_response.dart';
 import 'package:http/http.dart' as http;
 
 class ClientRepository {
-  final String apiUrl =
-      'https://localhost:7137/api/Clients?pageNumber=1&pageSize=10';
+  final String baseUrl = 'https://localhost:7137/api';
 
-  Future<List<Client>> fetchClients() async {
-    final response = await http.get(Uri.parse(apiUrl));
+  Future<ClientResponse> getClients(int page, int pageSize) async {
+    final response = await http
+        .get(Uri.parse('$baseUrl/clients?pageNumber=$page&pageSize=$pageSize'));
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final List<dynamic> clientsJson = data['clients'];
-      return clientsJson.map((json) => Client.fromJson(json)).toList();
+      final responseBody = json.decode(response.body);
+
+      Iterable jsonResponse = responseBody['clients'];
+      final List<Client> clients =
+          jsonResponse.map((client) => Client.fromJson(client)).toList();
+
+      // Extract total count from the headers
+      final xPagination = response.headers['x-pagination'];
+      int totalCount = 0;
+      if (xPagination != null) {
+        final paginationData = json.decode(xPagination);
+        totalCount = paginationData['TotalCount'] ??
+            0; // Default to 0 if TotalCount is not present
+      }
+
+      return ClientResponse(
+        clients: clients,
+        totalCount: totalCount,
+      );
     } else {
-      throw Exception('Failed to load clients');
+      // You might want to provide more details in the exception or handle different status codes
+      throw Exception(
+          'Failed to load clients. Status code: ${response.statusCode}');
     }
   }
-
-  // Future<Client> addClient(Client client) async {
-  //   final response = await http.post(
-  //     Uri.parse('https://localhost:7137/api/Clients'),
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: json.encode(client.toJson()),
-  //   );
-  //   if (response.statusCode == 201) {
-  //     return Client.fromJson(json.decode(response.body));
-  //   } else {
-  //     throw Exception('Failed to add client');
-  //   }
-  // }
 }
